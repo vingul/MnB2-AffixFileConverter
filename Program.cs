@@ -33,14 +33,8 @@ namespace AffixFileConverter
                 }
                 outName = args[outNameIndex];
 
-                Stopwatch stopwatch = new Stopwatch();
-                stopwatch.Start();
-
                 Affix affix = new Affix();
                 Dictionary<string, Tuple<Dictionary<string, SuffixGroup>, string>> affixes = affix.LoadAffixes(affixFolderName);
-
-                stopwatch.Stop();
-                Console.WriteLine($"Час зчитування файлів: {stopwatch.ElapsedMilliseconds}мс");
 
                 if (!outName.EndsWith(".afx"))
                     outName += ".afx";
@@ -99,55 +93,6 @@ namespace AffixFileConverter
                 {
                     Console.WriteLine($"Помилка при записі файлу: {e.Message}");
                 }
-
-                try
-                {
-                    BinaryReader reader = new BinaryReader(File.Open(outName, FileMode.Open));
-                    stopwatch.Reset();
-                    stopwatch.Start();
-                    int affixCount = reader.ReadInt32();
-                    Dictionary<string, Dictionary<string, SuffixGroup>> readAffixes = new Dictionary<string, Dictionary<string, SuffixGroup>>();
-                    for (int i = 0; i < affixCount; i++)
-                    {
-                        string rule = reader.ReadString();
-                        int reCount = reader.ReadInt32();
-                        Dictionary<string, SuffixGroup> ruleDict = new Dictionary<string, SuffixGroup>();
-                        for (int j = 0; j < reCount; j++)
-                        {
-                            string re = reader.ReadString();
-                            int endCount = reader.ReadInt32();
-                            SuffixGroup sufGroup = new SuffixGroup(re);
-                            for (int k = 0; k < endCount; k++)
-                            {
-                                string fromm = reader.ReadString();
-                                string to = reader.ReadString();
-                                Suffix suf = new Suffix(fromm, to, "");
-                                sufGroup.AppendAffix(suf);
-                                int len = reader.ReadInt32();
-                                for (int l = 0; l < len; l++)
-                                {
-                                    int v_len = reader.ReadInt32();
-                                    if (v_len > 0) {
-                                        string rid = reader.ReadString();
-                                        for (int m = 0; m < v_len; m++)
-                                        {
-                                            string vimd = reader.ReadString();
-                                        }
-                                    }
-                                }
-                            }
-                            ruleDict[re] = sufGroup;
-                        }
-                        readAffixes[rule] = ruleDict;
-                    }
-                    stopwatch.Stop();
-                    Console.WriteLine($"Час зчитування файлу: {stopwatch.ElapsedMilliseconds}мс");
-                }
-                catch (IOException e)
-                {
-                    Console.WriteLine($"Помилка при зчитуванні файлу: {e.Message}");
-                }
-
             }
             else
             {
