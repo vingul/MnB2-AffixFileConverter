@@ -9,7 +9,6 @@ namespace AffixFileConverter
     {
         static void PrintUsage()
         {
-            //FileInfo fi
             Console.WriteLine($"Usage: {System.AppDomain.CurrentDomain.FriendlyName}.exe [-i affixes_folder_name] <output_file_name>[.afx]");
             Console.WriteLine("\t-i affixes_folder_name - optional argument. ");
         }
@@ -71,7 +70,7 @@ namespace AffixFileConverter
                                 {
                                     tags = tags.Remove(0, idx + 1);
                                 }
-                                string[] parts = tags.Split("//"); // Варіанти для роду/множини
+                                string[] parts = tags.Split(new string[] { "//" }, StringSplitOptions.RemoveEmptyEntries); // Варіанти для роду/множини
                                 writer.Write(parts.Length);
                                 foreach (var part in parts)
                                 {
